@@ -3,33 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Q&A Extractor - question,answer; format</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>📄 Q&A Extractor (detects questions + red answers)</h1>
-        <div class="two-columns">
-            <div class="input-panel">
-                <label style="font-weight: 600; margin-bottom: 8px; display: block;">📥 Paste HTML code (full page or article)</label>
-                <textarea id="htmlInput" placeholder='Paste the HTML content here... e.g. the whole HTML you copied from itexamanswers.net'></textarea>
-                <button id="extractBtn">✨ Extract Questions & Answers</button>
-                <p style="font-size: 12px; color: #555; margin-top: 12px;">
-                    ⚡ Detection logic:<br>
-                    1️⃣ Looks for <code>&lt;p&gt;&lt;strong&gt;</code> with numbered text (e.g. "1. ...")<br>
-                    2️⃣ Fetches the next <code>&lt;ul&gt;</code> that contains options<br>
-                    3️⃣ Finds <code>&lt;li class="correct_answer"&gt;</code> → that’s the correct answer.
-                </p>
+<div class="container">
+    <h1>📄 Extract Q&A → question,answer;question,answer;...</h1>
+    <div class="two-columns">
+        <div class="input-panel">
+            <label style="font-weight: 600; margin-bottom: 8px; display: block;">📥 Paste HTML code (full page or article)</label>
+            <textarea id="htmlInput" placeholder='Paste the HTML content here... e.g. the whole HTML from itexamanswers.net'></textarea>
+            <div class="flex-buttons">
+                <button id="extractBtn">✨ Extract & format</button>
+                <button id="copyBtn" class="copy-btn">📋 Copy formatted output</button>
             </div>
-            <div class="output-panel">
-                <label style="font-weight: 600; margin-bottom: 8px; display: block;">✅ Extracted Q&A (questions + correct answers)</label>
-                <div id="resultsContainer" class="results-area">
-                    <div style="color: #6c757d; text-align: center; margin-top: 40%;">Paste HTML and click "Extract Q&A"</div>
-                </div>
-            </div>
+            <p class="note">
+                ⚡ Detection logic:<br>
+                1️⃣ Looks for <code>&lt;p&gt;&lt;strong&gt;</code> with numbered text (e.g. "1. ...")<br>
+                2️⃣ Fetches the next <code>&lt;ul&gt;</code> that contains options<br>
+                3️⃣ Finds <code>&lt;li class="correct_answer"&gt;</code> → correct answer.
+            </p>
         </div>
-        <div class="footer-note">
-            🧪 Works on pages where correct answers have class <code>correct_answer</code> (e.g., ITExamAnswers). No external libraries needed.
+        <div class="output-panel">
+            <label style="font-weight: 600; margin-bottom: 8px; display: block;">🔤 Formatted output (question,answer;)</label>
+            <textarea id="formattedOutput" readonly placeholder="Output will appear here..."></textarea>
+            <div class="results-area">
+                <div style="font-weight: 600; margin-bottom: 10px;">👁️ Preview (first 3 pairs)</div>
+                <div id="previewCards"></div>
+            </div>
         </div>
     </div>
+    <div class="footer-note">
+        🧪 Format: <code>question,answer;question,answer;...</code><br>
+        ✅ Works on pages where correct answers have class <code>correct_answer</code>.
+    </div>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
