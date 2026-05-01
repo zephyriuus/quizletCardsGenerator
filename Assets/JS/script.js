@@ -29,13 +29,13 @@
                     attempts++;
                 }
                 if (!nextUl || nextUl.tagName !== 'UL') continue;
-                
+
                 const correctLi = nextUl.querySelector('li.correct_answer');
                 if (!correctLi) continue;
-                
+
                 const answerText = correctLi.textContent.trim();
                 if (answerText === "") continue;
-                
+
                 qaList.push({
                     question: questionRaw,
                     answer: answerText
@@ -73,8 +73,8 @@
                 html += `
                     <div class="preview-card">
                         <div class="badge">Q${idx + 1}</div>
-                        <strong>📌 ${escapeHtml(item.question)}</strong><br>
-                        <span style="color:#2c6e2c;">✔️ ${escapeHtml(item.answer)}</span>
+                        <strong>${escapeHtml(item.question)}</strong><br>
+                        <span style="color:#2c6e2c;">${escapeHtml(item.answer)}</span>
                     </div>
                 `;
             });
@@ -89,7 +89,7 @@
             const rawHtml = htmlInput.value.trim();
             if (!rawHtml) {
                 formattedOutput.value = '';
-                previewCards.innerHTML = '<div class="error">❌ Please paste some HTML code first.</div>';
+                previewCards.innerHTML = '<div class="error">Please paste some HTML code first.</div>';
                 return;
             }
 
@@ -103,7 +103,7 @@
             } catch (err) {
                 console.error(err);
                 formattedOutput.value = '';
-                previewCards.innerHTML = `<div class="error">🚫 Parsing error: ${err.message}. Make sure you pasted valid HTML.</div>`;
+                previewCards.innerHTML = `<div class="error">Parsing error: ${err.message}. Make sure you pasted valid HTML.</div>`;
             }
         }
     })();
