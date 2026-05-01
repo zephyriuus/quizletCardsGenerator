@@ -1,109 +1,135 @@
 (function() {
+        const extractBtn = document.getElementById('extractBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const htmlInput = document.getElementById('htmlInput');
+        const formattedOutput = document.getElementById('formattedOutput');
+        const previewCards = document.getElementById('previewCards');
+        const qaSepInput = document.getElementById('qaSep');
+        const pairSepInput = document.getElementById('pairSep');
+        const trailingSepCheck = document.getElementById('trailingSep');
 
-const extractBtn = document.getElementById('extractBtn');
-const copyBtn = document.getElementById('copyBtn');
-const htmlInput = document.getElementById('htmlInput');
-const formattedOutput = document.getElementById('formattedOutput');
-const previewCards = document.getElementById('previewCards');
-
-function extractQnA(htmlString) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
-
-    const content = doc.querySelector('.thecontent');
-    if (!content) return [];
-
-    const blocks = content.querySelectorAll('p, h1, h2, h3, h4');
-
-    const qaList = [];
-
-    for (let el of blocks) {
-        const strong = el.querySelector('strong');
-        if (!strong) continue;
-
-        const questionRaw = strong.textContent.trim();
-
-        if (!/^\s*\d+[\.\)]/.test(questionRaw)) continue;
-
-        let answerText = "";
-
-        // --- CASE 1: UL with correct_answer ---
-        let next = el.nextElementSibling;
-        while (next && next.tagName !== 'UL' && next.tagName !== 'P') {
-            next = next.nextElementSibling;
-        }
-
-        if (next && next.tagName === 'UL') {
-            const correct = next.querySelector('li.correct_answer, li.correct');
-            if (correct) {
-                answerText = correct.textContent.trim();
-            }
-        }
-
-        // --- CASE 2: "Correct Answer:" fallback ---
-        if (!answerText) {
-            let scan = el.nextElementSibling;
-            let limit = 0;
-
-            while (scan && limit < 10) {
-                const text = scan.textContent;
-
-                const match = text.match(/Correct Answer[:\s]+(.+)/i);
-                if (match) {
-                    answerText = match[1].trim();
-                    break;
+        // Core extraction: returns array of {question, answer}
+        function extractQnA(htmlString) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+            const qaList = [];
+            const paragraphs = doc.querySelectorAll('p');
+            
+            for (let p of paragraphs) {
+                const strong = p.querySelector('strong');
+                if (!strong) continue;
+                const questionRaw = strong.textContent.trim();
+                // Must start with a number and a dot (e.g., "1.", "2.")
+                if (!/^\d+\./.test(questionRaw) && !/^\d+\./.test(questionRaw.substring(0, 10))) {
+                    continue;
                 }
-
-                scan = scan.nextElementSibling;
-                limit++;
+                
+                let nextUl = p.nextElementSibling;
+                let attempts = 0;
+                while (nextUl && nextUl.tagName !== 'UL' && attempts < 5) {
+                    nextUl = nextUl.nextElementSibling;
+                    attempts++;
+                }
+                if (!nextUl || nextUl.tagName !== 'UL') continue;
+                
+                const correctLi = nextUl.querySelector('li.correct_answer');
+                if (!correctLi) continue;
+                
+                const answerText = correctLi.textContent.trim();
+                if (answerText === "") continue;
+                
+                qaList.push({
+                    question: questionRaw,
+                    answer: answerText
+                });
+            }
+            return qaList;
+        }
+        
+        // Format with custom separators
+        function formatCustom(qaList, qaSep, pairSep, addTrailing) {
+            if (qaList.length === 0) return '';
+            const pairs = qaList.map(item => `${item.question}${qaSep}${item.answer}`);
+            let result = pairs.join(pairSep);
+            if (addTrailing) result += pairSep;
+            return result;
+        }
+        
+        // Escape HTML for safe preview
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // Show preview of first 3 Q&A pairs
+        function renderPreview(qaList) {
+            if (!qaList.length) {
+                previewCards.innerHTML = '<div class="error">No questions/answers found. Make sure you pasted HTML with questions and correct_answer class.</div>';
+                return;
+            }
+            const toShow = qaList.slice(0, 3);
+            let html = '';
+            toShow.forEach((item, idx) => {
+                html += `
+                    <div class="preview-card">
+                        <div class="badge">Q${idx + 1}</div>
+                        <strong>📌 ${escapeHtml(item.question)}</strong><br>
+                        <span style="color:#2c6e2c;">✔️ ${escapeHtml(item.answer)}</span>
+                    </div>
+                `;
+            });
+            if (qaList.length > 3) {
+                html += `<div class="preview-card" style="background:#e9ecef;">... and ${qaList.length - 3} more pairs</div>`;
+            }
+            previewCards.innerHTML = html;
+        }
+        
+        // Main extraction and display
+        function runExtraction() {
+            const rawHtml = htmlInput.value.trim();
+            if (!rawHtml) {
+                formattedOutput.value = '';
+                previewCards.innerHTML = '<div class="error">❌ Please paste some HTML code first.</div>';
+                return;
+            }
+            
+            try {
+                const qa = extractQnA(rawHtml);
+                const qaSep = qaSepInput.value || ',';
+                const pairSep = pairSepInput.value || ';';
+                const addTrailing = trailingSepCheck.checked;
+                const formatted = formatCustom(qa, qaSep, pairSep, addTrailing);
+                formattedOutput.value = formatted;
+                renderPreview(qa);
+            } catch (err) {
+                console.error(err);
+                formattedOutput.value = '';
+                previewCards.innerHTML = `<div class="error">🚫 Parsing error: ${err.message}. Make sure you pasted valid HTML.</div>`;
             }
         }
-
-        if (!answerText) continue;
-
-        // Cleanup
-        const cleanQ = questionRaw.replace(/^\d+[\.\)]\s*/, '');
-        const cleanA = answerText.replace(/^[A-Z]\.\s*/, '');
-
-        qaList.push({
-            question: cleanQ,
-            answer: cleanA
-        });
-    }
-
-    return qaList;
-}
-
-function formatOutput(list) {
-    return list.map(q => `${q.question},${q.answer}`).join(';') + ';';
-}
-
-function renderPreview(list) {
-    previewCards.innerHTML = '';
-
-    list.slice(0, 3).forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'preview-card';
-        div.innerHTML = `<strong>${item.question}</strong><br>${item.answer}`;
-        previewCards.appendChild(div);
-    });
-}
-
-function runExtraction() {
-    const raw = htmlInput.value.trim();
-    if (!raw) return;
-
-    const qa = extractQnA(raw);
-
-    formattedOutput.value = formatOutput(qa);
-    renderPreview(qa);
-}
-
-function copyText() {
-    navigator.clipboard.writeText(formattedOutput.value);
-}
-
-extractBtn.addEventListener('click', runExtraction);
-copyBtn.addEventListener('click', copyText);
-
-})();
+        
+        // Copy to clipboard
+        function copyToClipboard() {
+            const text = formattedOutput.value;
+            if (!text) {
+                alert('Nothing to copy. Please extract first.');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                const original = copyBtn.textContent;
+                copyBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = original;
+                }, 1500);
+            }).catch(() => {
+                alert('Failed to copy. You can manually select and copy.');
+            });
+        }
+        
+        extractBtn.addEventListener('click', runExtraction);
+        copyBtn.addEventListener('click', copyToClipboard);
+    })();

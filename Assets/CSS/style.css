@@ -1,44 +1,170 @@
-body {
-    font-family: Arial;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 1200px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-}
-
-.two-columns {
-    display: flex;
-    gap: 20px;
-}
-
-textarea {
-    width: 100%;
-    height: 300px;
-    padding: 10px;
-    font-family: monospace;
-}
-
-button {
-    margin-top: 10px;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.copy-btn {
-    background: green;
-    color: white;
-}
-
-.preview-card {
-    background: #eee;
-    padding: 8px;
-    margin-top: 6px;
-    border-radius: 6px;
-}
+* {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 24px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        h1 {
+            background: #0288d1;
+            color: white;
+            margin: 0;
+            padding: 20px 28px;
+            font-size: 1.7rem;
+            font-weight: 600;
+        }
+        .two-columns {
+            display: flex;
+            gap: 24px;
+            padding: 28px;
+            flex-wrap: wrap;
+        }
+        .input-panel {
+            flex: 1.2;
+            min-width: 280px;
+        }
+        .output-panel {
+            flex: 1.8;
+            min-width: 320px;
+        }
+        textarea {
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            resize: vertical;
+            background: #fef9e6;
+        }
+        #htmlInput {
+            height: 380px;
+        }
+        #formattedOutput {
+            height: 160px;
+            background: #1e2a3a;
+            color: #e2e8f0;
+            font-size: 12px;
+        }
+        button {
+            background: #0288d1;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-top: 16px;
+            margin-right: 12px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #026fa7;
+            transform: scale(0.97);
+        }
+        .copy-btn {
+            background: #2c6e2c;
+        }
+        .copy-btn:hover {
+            background: #1f521f;
+        }
+        .results-area {
+            background: #f9fafc;
+            border-radius: 20px;
+            border: 1px solid #e0e4e8;
+            padding: 16px;
+            margin-top: 18px;
+        }
+        .preview-card {
+            background: #f1f5f9;
+            border-radius: 14px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            word-break: break-word;
+        }
+        .badge {
+            font-size: 0.7rem;
+            background: #e2e8f0;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+        }
+        .footer {
+            padding: 14px 28px 20px;
+            font-size: 0.8rem;
+            color: #4b5563;
+            border-top: 1px solid #e5e7eb;
+            background: #fafafa;
+        }
+        .error {
+            color: #b91c1c;
+            background: #fee2e2;
+            padding: 12px;
+            border-radius: 16px;
+        }
+        .flex-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        .note {
+            font-size: 12px;
+            color: #555;
+            margin-top: 14px;
+            line-height: 1.4;
+        }
+        code {
+            background: #eef2ff;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        .format-controls {
+            background: #f8f9fc;
+            padding: 12px 16px;
+            border-radius: 20px;
+            margin-top: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        .format-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .format-row label {
+            font-weight: 600;
+            min-width: 140px;
+            font-size: 0.85rem;
+        }
+        .format-row input {
+            padding: 6px 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            font-family: monospace;
+            font-size: 0.9rem;
+            width: 80px;
+        }
+        .format-row input[type="checkbox"] {
+            width: auto;
+            margin-left: 5px;
+        }
+        hr {
+            margin: 10px 0;
+        }
