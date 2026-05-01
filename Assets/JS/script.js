@@ -5,7 +5,6 @@
         const previewCards = document.getElementById('previewCards');
         const qaSepInput = document.getElementById('qaSep');
         const pairSepInput = document.getElementById('pairSep');
-        const trailingSepCheck = document.getElementById('trailingSep');
 
         // Core extraction: returns array of {question, answer}
         function extractQnA(htmlString) {
@@ -13,7 +12,7 @@
             const doc = parser.parseFromString(htmlString, 'text/html');
             const qaList = [];
             const paragraphs = doc.querySelectorAll('p');
-            
+
             for (let p of paragraphs) {
                 const strong = p.querySelector('strong');
                 if (!strong) continue;
@@ -22,7 +21,7 @@
                 if (!/^\d+\./.test(questionRaw) && !/^\d+\./.test(questionRaw.substring(0, 10))) {
                     continue;
                 }
-                
+
                 let nextUl = p.nextElementSibling;
                 let attempts = 0;
                 while (nextUl && nextUl.tagName !== 'UL' && attempts < 5) {
@@ -44,16 +43,14 @@
             }
             return qaList;
         }
-        
+
         // Format with custom separators
-        function formatCustom(qaList, qaSep, pairSep, addTrailing) {
+        function formatCustom(qaList, qaSep, pairSep) {
             if (qaList.length === 0) return '';
             const pairs = qaList.map(item => `${item.question}${qaSep}${item.answer}`);
             let result = pairs.join(pairSep);
-            if (addTrailing) result += pairSep;
-            return result;
         }
-        
+
         // Escape HTML for safe preview
         function escapeHtml(str) {
             return str.replace(/[&<>]/g, function(m) {
@@ -63,7 +60,7 @@
                 return m;
             });
         }
-        
+
         // Show preview of first 3 Q&A pairs
         function renderPreview(qaList) {
             if (!qaList.length) {
@@ -95,13 +92,12 @@
                 previewCards.innerHTML = '<div class="error">❌ Please paste some HTML code first.</div>';
                 return;
             }
-            
+
             try {
                 const qa = extractQnA(rawHtml);
                 const qaSep = qaSepInput.value || ',';
                 const pairSep = pairSepInput.value || ';';
-                const addTrailing = trailingSepCheck.checked;
-                const formatted = formatCustom(qa, qaSep, pairSep, addTrailing);
+                const formatted = formatCustom(qa, qaSep, pairSep);
                 formattedOutput.value = formatted;
                 renderPreview(qa);
             } catch (err) {

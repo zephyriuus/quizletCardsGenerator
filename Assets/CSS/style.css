@@ -155,10 +155,6 @@
         font-size: 0.9rem;
         width: 80px;
     }
-    .format-row input[type="checkbox"] {
-        width: auto;
-        margin-left: 5px;
-    }
     hr {
         margin: 10px 0;
     }

@@ -16,17 +16,12 @@
             <textarea id="htmlInput" placeholder='Paste the full HTML source of a quiz page...'></textarea>
             <div class="format-controls">
                 <div class="format-row">
-                    <label>🔹 Between question & answer:</label>
+                    <label>Between question & answer:</label>
                     <input type="text" id="qaSep" value="," maxlength="3" placeholder="e.g. , or $">
                 </div>
                 <div class="format-row">
-                    <label>🔸 Between pairs (cards):</label>
+                    <label>Between pairs (cards):</label>
                     <input type="text" id="pairSep" value=";" maxlength="3" placeholder="e.g. ; or |">
-                </div>
-                <div class="format-row">
-                    <label>🔹 Add trailing separator at end?</label>
-                    <input type="checkbox" id="trailingSep" checked>
-                    <span style="font-size:0.8rem;">(e.g. "..." + pairSep)</span>
                 </div>
             </div>
 
@@ -35,10 +30,10 @@
             </div>
         </div>
         <div class="output-panel">
-            <label style="font-weight: 600; margin-bottom: 8px; display: block;">🔤 Extracted Q&A string</label>
+            <label style="font-weight: 600; margin-bottom: 8px; display: block;">Extracted Q&A string</label>
             <textarea id="formattedOutput" readonly placeholder="Output will appear here..."></textarea>
             <div class="results-area">
-                <div style="font-weight: 600; margin-bottom: 10px;">👁️ Preview (first 3 pairs)</div>
+                <div style="font-weight: 600; margin-bottom: 10px;">Preview (first 3 pairs)</div>
                 <div id="previewCards"></div>
             </div>
         </div>
