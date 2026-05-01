@@ -1,6 +1,5 @@
 (function() {
         const extractBtn = document.getElementById('extractBtn');
-        const copyBtn = document.getElementById('copyBtn');
         const htmlInput = document.getElementById('htmlInput');
         const formattedOutput = document.getElementById('formattedOutput');
         const previewCards = document.getElementById('previewCards');
@@ -111,25 +110,4 @@
                 previewCards.innerHTML = `<div class="error">🚫 Parsing error: ${err.message}. Make sure you pasted valid HTML.</div>`;
             }
         }
-        
-        // Copy to clipboard
-        function copyToClipboard() {
-            const text = formattedOutput.value;
-            if (!text) {
-                alert('Nothing to copy. Please extract first.');
-                return;
-            }
-            navigator.clipboard.writeText(text).then(() => {
-                const original = copyBtn.textContent;
-                copyBtn.textContent = '✅ Copied!';
-                setTimeout(() => {
-                    copyBtn.textContent = original;
-                }, 1500);
-            }).catch(() => {
-                alert('Failed to copy. You can manually select and copy.');
-            });
-        }
-        
-        extractBtn.addEventListener('click', runExtraction);
-        copyBtn.addEventListener('click', copyToClipboard);
     })();

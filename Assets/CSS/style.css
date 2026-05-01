@@ -74,12 +74,6 @@
         background: #026fa7;
         transform: scale(0.97);
     }
-    .copy-btn {
-        background: #2c6e2c;
-    }
-    .copy-btn:hover {
-        background: #1f521f;
-    }
     .results-area {
         background: #f9fafc;
         border-radius: 20px;

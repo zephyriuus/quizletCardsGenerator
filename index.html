@@ -9,7 +9,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>📄 Q&A Extractor - Custom separators</h1>
+    <h1>ITExamAnswers to Quizlet Deck Generator</h1>
     <div class="two-columns">
         <div class="input-panel">
             <label style="font-weight: 600; margin-bottom: 8px; display: block;">📥 Paste HTML (from itexamanswers.net)</label>
@@ -31,16 +31,7 @@
             </div>
 
             <div class="flex-buttons">
-                <button id="extractBtn">✨ Extract & format</button>
-                <button id="copyBtn" class="copy-btn">📋 Copy string</button>
-            </div>
-            <div class="note">
-                ⚡ <strong>How it works:</strong><br>
-                • Looks for <code>&lt;p&gt;&lt;strong&gt;</code> with a number (e.g., "1. What is...")<br>
-                • Finds the next <code>&lt;ul&gt;</code> (answer options)<br>
-                • Picks <code>&lt;li class="correct_answer"&gt;</code> as the correct answer<br>
-                • Outputs using your chosen separators.<br>
-                • Example: using <code>$</code> and <code>|</code> → <code>What is 2+2? $ 4 | Who? $ Me |</code>
+                <button id="extractBtn">Extract & format</button>
             </div>
         </div>
         <div class="output-panel">
@@ -53,7 +44,7 @@
         </div>
     </div>
     <div class="footer">
-        ✅ Works on any page that uses <code>class="correct_answer"</code> for red answers.
+        © 2026 Starlit Sky. All rights reserved.
     </div>
 </div>
 </body>
