@@ -1,31 +1,51 @@
 (function() {
+    // DOM elements
     const htmlInput = document.getElementById('htmlInput');
-    const previewCards = document.getElementById('previewCards');
+    const formattedOutput = document.getElementById('formattedOutput');
     const qaSepInput = document.getElementById('qaSep');
     const pairSepInput = document.getElementById('pairSep');
     const cardsListContainer = document.getElementById('cardsListContainer');
     const cardsCounterSpan = document.getElementById('cardsCounter');
+    const extractBtn = document.getElementById('extractBtn');
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const deselectAllBtn = document.getElementById('deselectAllBtn');
+    const toggleHideBtn = document.getElementById('toggleHideBtn');
+    const hideStatusLabel = document.getElementById('hideStatusLabel');
+    const copyAllBtn = document.getElementById('copyAllBtn');
 
-    qaSepInput.value = "\t";
-    pairSepInput.value = "\n";
+    // State
+    let currentCards = [];        // array of card objects { id, question, answer, type }
+    let checkedState = [];        // boolean array parallel to currentCards
+    let hideUncheckedActive = false;   // toggle state
 
-    let currentCards = [];
-    let checkedState = [];
+    // Helper: generate unique id
+    function generateId() {
+        return Date.now() + '-' + Math.random().toString(36).substring(2, 8);
+    }
 
-    // strips leading numbers from text
+    // Strip leading numbers from question
     function stripNumberFromQuestion(text) {
         if (!text) return text;
         return text.replace(/^\d+\.\s*/, '');
     }
 
-    // formats multiple answers
     function formatMultipleAnswers(answerArray) {
         if (!answerArray.length) return '';
         if (answerArray.length === 1) return answerArray[0];
-        return answerArray.map(ans => `- ${ans.trim()}`).join('\n');
+        return answerArray.map(ans => `- ${ans.trim()}`).join('; ');
     }
 
-    // transforms the q&as into decks
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Extract cards from HTML (robust)
     function extractCardsFromHtml(htmlString) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlString, 'text/html');
@@ -36,31 +56,23 @@
             const strong = p.querySelector('strong');
             if (!strong) continue;
             let questionRaw = strong.textContent.trim();
-            // detects questions by checking the number
             if (!/^\d+\./.test(questionRaw) && !/^\d+\./.test(questionRaw.substring(0, 10))) continue;
             
             const questionLower = questionRaw.toLowerCase();
             const isMatchQuestion = questionLower.includes('match the');
             
             if (isMatchQuestion) {
-                // locates matching type questions and divides cards by table column in html code
                 let matchTable = null;
                 let currentElem = p.nextElementSibling;
                 let searchDepth = 0;
-                const maxDepth = 15;
-                while (currentElem && searchDepth < maxDepth && !matchTable) {
-                    //looks for a table
+                while (currentElem && searchDepth < 15 && !matchTable) {
                     if (currentElem.tagName === 'TABLE') {
                         matchTable = currentElem;
                         break;
                     }
                     if (currentElem.querySelector) {
                         const tableInside = currentElem.querySelector('table');
-                        if (tableInside) {
-                            matchTable = tableInside;
-                            break;
-                        }
-                        
+                        if (tableInside) { matchTable = tableInside; break; }
                         const msgBox = currentElem.classList && (currentElem.classList.contains('message_box') || currentElem.classList.contains('success'));
                         if (msgBox) {
                             const tbl = currentElem.querySelector('table');
@@ -72,7 +84,6 @@
                 }
                 
                 if (matchTable) {
-                    //extracts rows from the table
                     const rows = matchTable.querySelectorAll('tbody tr');
                     let pairCount = 0;
                     for (let row of rows) {
@@ -81,21 +92,18 @@
                             const term = cells[0].textContent.trim();
                             const description = cells[1].textContent.trim();
                             if (term && description) {
-                                // creates the card
                                 allCards.push({
-                                    question: description,   // front
-                                    answer: term,            // back
+                                    question: description,
+                                    answer: term,
                                     type: 'match'
                                 });
                                 pairCount++;
                             }
                         }
                     }
-                    //continues if there are more rows found
                     if (pairCount > 0) continue;
                 }
                 
-                //if no tables found
                 let fallbackText = "";
                 let sibling = p.nextElementSibling;
                 let fallbackDepth = 0;
@@ -118,7 +126,7 @@
                 if (allCards.length === 0) {
                     allCards.push({ question: questionRaw, answer: "(Match table not detected) " + fallbackText.substring(0, 200), type: 'extracted' });
                 }
-            }
+            } 
             else {
                 let nextUl = p.nextElementSibling;
                 let attempts = 0;
@@ -127,17 +135,14 @@
                     attempts++;
                 }
                 if (!nextUl || nextUl.tagName !== 'UL') continue;
-                
                 const correctItems = nextUl.querySelectorAll('li.correct_answer');
                 if (correctItems.length === 0) continue;
-                
                 const answerTexts = [];
                 for (let li of correctItems) {
                     let ans = li.textContent.trim();
                     if (ans) answerTexts.push(ans);
                 }
                 if (answerTexts.length === 0) continue;
-                
                 let finalAnswer = answerTexts.length === 1 ? answerTexts[0] : formatMultipleAnswers(answerTexts);
                 allCards.push({
                     question: questionRaw,
@@ -149,16 +154,33 @@
         return allCards;
     }
 
+    // Render cards based on hideUncheckedActive flag
     function renderCardsList() {
         if (!cardsListContainer) return;
-        if (!currentCards.length) {
-            cardsListContainer.innerHTML = '<div class="error" style="margin:10px;">No cards found</div>';
+        // Determine visible indices
+        let visibleIndices = [];
+        for (let i = 0; i < currentCards.length; i++) {
+            if (hideUncheckedActive && !checkedState[i]) continue;
+            visibleIndices.push(i);
+        }
+        
+        if (visibleIndices.length === 0 && currentCards.length === 0) {
+            cardsListContainer.innerHTML = '<div class="error">No cards found.</div>';
             cardsCounterSpan.innerText = `0 cards`;
+            updateHideStatusLabel();
             return;
         }
+        if (visibleIndices.length === 0 && currentCards.length > 0 && hideUncheckedActive) {
+            cardsListContainer.innerHTML = '<div class="error">All cards hidden because "Hide unchecked" is ON. Check some cards to make them reappear.</div>';
+            cardsCounterSpan.innerText = `${currentCards.length} total · 0 visible`;
+            updateHideStatusLabel();
+            return;
+        }
+        
         let html = '';
-        currentCards.forEach((card, idx) => {
-            const isChecked = checkedState[idx] === true;
+        for (let idx of visibleIndices) {
+            const card = currentCards[idx];
+            const isChecked = checkedState[idx];
             const cleanQ = stripNumberFromQuestion(card.question);
             let typeBadge = '';
             if (card.type === 'match') typeBadge = '<span class="badge-match">matching type</span>';
@@ -181,45 +203,99 @@
             }
             
             html += `
-                <div class="card-item">
-                    <input type="checkbox" class="card-check" data-idx="${idx}" ${isChecked ? 'checked' : ''}>
+                <div class="card-item" data-card-id="${card.id}">
+                    <input type="checkbox" class="card-check" data-id="${card.id}" ${isChecked ? 'checked' : ''}>
                     <div class="card-content">
-                        <h4>Front: </h4>
+                        <h4>Front (Term / Question)</h4>
                         <div class="card-question">${escapeHtml(cleanQ)} ${typeBadge}</div>
-                        <h4>Back: </h4>
+                        <h4>Back (Definition / Answer)</h4>
                         <div class="card-answer">${answerHtml}</div>
                     </div>
                 </div>
             `;
-        });
-        cardsListContainer.innerHTML = html;
-        cardsCounterSpan.innerText = `${currentCards.length} card${currentCards.length !== 1 ? 's' : ''}`;
-    }
-    
-    function setNewCards(cardsArray) {
-        currentCards = cardsArray.map((card, idx) => ({
-            id: idx + Date.now() + Math.random(),
-            question: card.question,
-            answer: card.answer,
-            type: card.type || 'extracted'
-        }));
-        checkedState = new Array(currentCards.length).fill(true);
-        renderCardsList();
-        generateSelectedOutput();
-    }
-    
-    function generateSelectedOutput() {
-        const qaSep = qaSepInput.value || ',';
-        const pairSep = pairSepInput.value || ';';
-        const selected = [];
-        for (let i = 0; i < currentCards.length; i++) {
-            if (checkedState[i]) selected.push(currentCards[i]);
         }
-        if (selected.length === 0) {
+        cardsListContainer.innerHTML = html;
+        const total = currentCards.length;
+        const visibleCount = visibleIndices.length;
+        if (hideUncheckedActive && total !== visibleCount) {
+            cardsCounterSpan.innerText = `${visibleCount} / ${total} card${total !== 1 ? 's' : ''} (unchecked hidden)`;
+        } else {
+            cardsCounterSpan.innerText = `${total} card${total !== 1 ? 's' : ''}`;
+        }
+        updateHideStatusLabel();
+        attachCheckboxEvents();
+    }
+    
+    function updateHideStatusLabel() {
+        if (hideUncheckedActive) {
+            toggleHideBtn.textContent = "Show all cards";
+            toggleHideBtn.style.color = '#830000';
+        } else {
+            toggleHideBtn.textContent = "Hide unchecked cards";
+            toggleHideBtn.style.color = '#078500';
+        }
+    }
+    
+    // Toggle hide/unchecked mode
+    function toggleHideUnchecked() {
+        // If no cards, just toggle (or do nothing)
+        if (currentCards.length === 0) {
+            hideUncheckedActive = !hideUncheckedActive;
+            renderCardsList();
+            return;
+        }
+
+        // Check if all cards are checked
+        const allChecked = checkedState.every(checked => checked === true);
+
+        if (allChecked) {
+            alert("All cards are checked");
+            // Do NOT toggle; just return (or you could still toggle, but user says else continues toggling)
+            return;
+        } else {
+            // Continue to toggle visibility
+            hideUncheckedActive = !hideUncheckedActive;
+            renderCardsList();
+        }
+    }
+    
+    // Attach checkbox change listeners
+    function attachCheckboxEvents() {
+        cardsListContainer.removeEventListener('change', handleCheckboxChange);
+        cardsListContainer.addEventListener('change', handleCheckboxChange);
+    }
+    
+    function handleCheckboxChange(e) {
+        if (e.target.classList && e.target.classList.contains('card-check')) {
+            const cardId = e.target.getAttribute('data-id');
+            if (!cardId) return;
+            const idx = currentCards.findIndex(c => c.id === cardId);
+            if (idx !== -1) {
+                checkedState[idx] = e.target.checked;
+                renderCardsList();      // re-render to apply hide logic
+                generateSelectedOutput();
+            }
+        }
+    }
+    
+    // Generate final Q&A string based on checked cards
+    function generateSelectedOutput() {
+        const qaSep = qaSepInput.value || '\t';
+        let pairSepRaw = pairSepInput.value;
+        let pairSep = pairSepRaw === '\\n' ? '\n' : (pairSepRaw || '\n');
+        if (pairSep === '\\n') pairSep = '\n';
+        
+        const selectedCards = [];
+        for (let i = 0; i < currentCards.length; i++) {
+            if (checkedState[i]) {
+                selectedCards.push(currentCards[i]);
+            }
+        }
+        if (selectedCards.length === 0) {
             formattedOutput.value = '';
             return '';
         }
-        const pairs = selected.map(card => {
+        const pairs = selectedCards.map(card => {
             let cleanQuestion = stripNumberFromQuestion(card.question);
             if (!cleanQuestion) cleanQuestion = card.question;
             return `${cleanQuestion}${qaSep}${card.answer}`;
@@ -229,16 +305,30 @@
         return out;
     }
     
+    // Replace current deck with new extracted cards
+    function setNewCards(cardsArray) {
+        currentCards = cardsArray.map(card => ({
+            id: generateId(),
+            question: card.question,
+            answer: card.answer,
+            type: card.type || 'extracted'
+        }));
+        checkedState = new Array(currentCards.length).fill(true);
+        renderCardsList();
+        generateSelectedOutput();
+    }
+    
+    // Extraction flow
     function runExtraction() {
         const rawHtml = htmlInput.value.trim();
         if (!rawHtml) {
-            alert("Please paste HTML source code.");
+            alert("Please paste HTML source from itexamanswers.net");
             return;
         }
         try {
             const extracted = extractCardsFromHtml(rawHtml);
             if (extracted.length === 0) {
-                cardsListContainer.innerHTML = '<div class="error">No valid Q&A found. Ensure HTML contains numbered questions</div>';
+                cardsListContainer.innerHTML = '<div class="error">No valid Q&A found. Verify HTML structure (numbered questions + correct_answer list / match tables).</div>';
                 formattedOutput.value = '';
                 currentCards = [];
                 checkedState = [];
@@ -252,43 +342,52 @@
         }
     }
     
+    function selectAll() {
+        for (let i = 0; i < checkedState.length; i++) checkedState[i] = true;
+        renderCardsList();
+        generateSelectedOutput();
+    }
     
-    function selectAll() { for (let i=0;i<checkedState.length;i++) checkedState[i]=true; renderCardsList(); generateSelectedOutput(); }
-    function deselectAll() { for (let i=0;i<checkedState.length;i++) checkedState[i]=false; renderCardsList(); generateSelectedOutput(); }
+    function deselectAll() {
+        for (let i = 0; i < checkedState.length; i++) checkedState[i] = false;
+        renderCardsList();
+        generateSelectedOutput();
+    }
     
-    function attachCheckboxListener() {
-        cardsListContainer.addEventListener('change', (e) => {
-            if (e.target.classList.contains('card-check')) {
-                const idx = parseInt(e.target.getAttribute('data-idx'), 10);
-                if (!isNaN(idx) && checkedState[idx] !== undefined) {
-                    checkedState[idx] = e.target.checked;
-                    generateSelectedOutput();
-                }
-            }
+    function copyAllToClipboard() {
+        const text = formattedOutput.value;
+        if (!text || text.trim() === "") {
+            alert("No content to copy. Please extract cards and select at least one card.");
+            return;
+        }
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = copyAllBtn.textContent;
+            copyAllBtn.textContent = "Copied!";
+            setTimeout(() => {
+                copyAllBtn.textContent = originalText;
+            }, 1500);
+        }).catch(() => {
+            alert("Failed to copy. Select the text manually.");
         });
     }
-
+    
+    // Bind events
     extractBtn.onclick = runExtraction;
-    resetExtractOnly.onclick = resetToExtracted;
-    exportSelectedBtn.onclick = () => { const out = generateSelectedOutput(); if(!out) alert("No cards selected."); };
     selectAllBtn.onclick = selectAll;
     deselectAllBtn.onclick = deselectAll;
-    addCustomCardBtn.onclick = addCustom;
-    attachCheckboxListener();
+    toggleHideBtn.onclick = toggleHideUnchecked;
+    copyAllBtn.onclick = copyAllToClipboard;
     
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
+    // Separators change -> update output
+    qaSepInput.addEventListener('input', () => generateSelectedOutput());
+    pairSepInput.addEventListener('input', () => generateSelectedOutput());
     
+    // Initial state
     currentCards = [];
     checkedState = [];
     renderCardsList();
     formattedOutput.value = '';
-
+    
+    // Ensure pairSep handles newline default correctly
+    if (pairSepInput.value === '\\n') pairSepInput.value = '\n';
 })();

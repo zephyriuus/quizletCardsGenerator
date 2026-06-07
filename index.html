@@ -14,39 +14,54 @@
         <!-- LEFT PANEL -->
         <div class="input-panel">
             <h3>Paste HTML (from itexamanswers.net)</h3>
-            <textarea id="htmlInput" placeholder='Paste the full HTML source of a quiz page...'></textarea>
+            <textarea id="htmlInput" placeholder='HTML Code goes here...'></textarea>
             <div class="format-controls">
                 <div class="format-row">
-                    <p style="margin-right: 10px;">Between Term and Definition: <span style="font-size:0.75rem; background:#e9f0f5; padding:4px 12px; border-radius:50px;"><i>Default: Tab</i></span></p>
-                    <input type="text" id="qaSep" maxlength="3">
+                    <p>Term and Definition</p>
+                    <span style="font-size:0.7rem;">(Default: Tab)</span>
+                    <input type="text" id="qaSep" maxlength="3" value="">
                 </div>
                 <div class="format-row">
-                    <p style="margin-right: 10px;">Between Cards: <span style="font-size:0.75rem; background:#e9f0f5; padding:4px 12px; border-radius:50px;"><i>Default: Enter</i></span></p>
-                    <br><input type="text" id="pairSep" maxlength="3">
+                    <p>Between Cards:</p>
+                    <span style="font-size:0.7rem;">(Default: Enter)</span>
+                    <input type="text" id="pairSep" maxlength="3" value="">
                 </div>
             </div>
-
             <div class="flex-buttons">
-                <button id="extractBtn">Extract & format</button>
+                <button id="extractBtn">Extract</button>
             </div>
         </div>
+
         <!-- RIGHT PANEL -->
         <div class="output-panel">
-            <h3>Extracted Q&A string</h3>
-            <textarea id="formattedOutput" readonly placeholder="Output will appear here..."></textarea>
+            <h3>Exported Cards
+                <button id="copyAllBtn" class="copy-btn">Copy all</button>
+            </h3>
+            <textarea id="formattedOutput" readonly placeholder="Output will be generated after extraction & selection..."></textarea>
             <div class="cards-panel">
                 <div class="cards-header">
-                    <h3>Preview Cards <span style="font-weight:normal;">(check/uncheck to include)</span></h3>
-                    <span id="cardsCounter" style="font-size:0.75rem; background:#e9f0f5; padding:4px 12px; border-radius:50px;">0 cards</span>
+                    <h3>Preview Cards <span>(select to include)</span></h3>
+                    <span id="cardsCounter">0 cards</span>
+                </div>
+                <div class="filter-bar">
+                    <div class="filter-option">
+                        <button id="toggleHideBtn" class="small-btn toggle-hide-btn">Toggle Visibility of Unchecked Cards</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="selectAllBtn" class="small-btn">Select all</button>
+                        <button id="deselectAllBtn" class="small-btn">Deselect all</button>
+                    </div>
                 </div>
                 <div id="cardsListContainer" class="cards-scroll">
-                    <div class="error" style="margin:10px;">No cards yet. Extract HTML or add custom cards.</div>
+                    <div class="error">No cards yet. Paste HTML and click "Extract".</div>
                 </div>
             </div>
         </div>
     </div>
+    
     <div class="footer">
-        © 2026 Starlit Sky. All rights reserved.
+        <h2>Not working? <a href="mailto:zelaskiee117@gmail.com"> email me here</a></h2>
+        © 2026 Starlit Sky
     </div>
 </div>
 </body>
