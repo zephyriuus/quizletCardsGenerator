@@ -184,7 +184,9 @@
                 <div class="card-item">
                     <input type="checkbox" class="card-check" data-idx="${idx}" ${isChecked ? 'checked' : ''}>
                     <div class="card-content">
+                        <h4>Front: </h4>
                         <div class="card-question">${escapeHtml(cleanQ)} ${typeBadge}</div>
+                        <h4>Back: </h4>
                         <div class="card-answer">${answerHtml}</div>
                     </div>
                 </div>

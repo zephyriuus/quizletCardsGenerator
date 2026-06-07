@@ -17,16 +17,12 @@
             <textarea id="htmlInput" placeholder='Paste the full HTML source of a quiz page...'></textarea>
             <div class="format-controls">
                 <div class="format-row">
-                    <p style="margin-right: 10px;">Between Term and Definition</p>
-                    <label>Tab: </label>
-                    <input type="radio" id="formatTab" name="formatOption" value="tab" checked>
-                    <input type="text" id="qaSep" maxlength="3" placeholder="Custom separator (e.g. \t for tab) ">
+                    <p style="margin-right: 10px;">Between Term and Definition: <span style="font-size:0.75rem; background:#e9f0f5; padding:4px 12px; border-radius:50px;"><i>Default: Tab</i></span></p>
+                    <input type="text" id="qaSep" maxlength="3">
                 </div>
                 <div class="format-row">
-                    <p style="margin-right: 10px;">Between Cards</p>
-                    <label>Enter: </label>
-                    <input type="radio" id="formatNewLine" name="formatOption" value="newline" checked>
-                    <br><input type="text" id="pairSep" maxlength="3" placeholder='Custom separator (e.g. \n for new line)'>
+                    <p style="margin-right: 10px;">Between Cards: <span style="font-size:0.75rem; background:#e9f0f5; padding:4px 12px; border-radius:50px;"><i>Default: Enter</i></span></p>
+                    <br><input type="text" id="pairSep" maxlength="3">
                 </div>
             </div>
 
@@ -40,7 +36,7 @@
             <textarea id="formattedOutput" readonly placeholder="Output will appear here..."></textarea>
             <div class="cards-panel">
                 <div class="cards-header">
-                    <h3>Card Manager <span style="font-weight:normal;">(check/uncheck to include)</span></h3>
+                    <h3>Preview Cards <span style="font-weight:normal;">(check/uncheck to include)</span></h3>
                     <span id="cardsCounter" style="font-size:0.75rem; background:#e9f0f5; padding:4px 12px; border-radius:50px;">0 cards</span>
                 </div>
                 <div id="cardsListContainer" class="cards-scroll">
