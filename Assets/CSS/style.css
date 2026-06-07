@@ -27,18 +27,18 @@ body {
     border-radius: 1rem;
     box-shadow: 0 20px 35px -12px #30302C;
     overflow: hidden;
-    border: 3px solid #30302C;
+    border: 3px solid #E0E0FB;
 }
 
 h1 {
-    background: #faebd1;
+    background: #FFFFFF;
     margin: 0;
     padding: 1.6rem 2rem;
     font-size: 1.8rem;
     font-weight: 600;
-    color: #3E3D36;
+    color: #343430;
     letter-spacing: -0.01em;
-    border-bottom: 2px solid #30302C;
+    border-bottom: 2px solid #E0E0FB;
 }
 
 .two-columns {
@@ -46,7 +46,7 @@ h1 {
     flex-wrap: wrap;
     gap: 1.5rem;
     padding: 2rem;
-    background: #f8f4e8;
+    background: #ffffffc0;
 }
 
 .input-panel, .output-panel {
@@ -55,7 +55,7 @@ h1 {
     background: #FFFFFF;
     border-radius: 1.5rem;
     box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.05);
-    border: 3px solid #343430;
+    border: 3px solid #E0E0FB;
     overflow: hidden;
 }
 
@@ -64,7 +64,7 @@ h1 {
     margin: 0;
     padding: 1rem 1.5rem;
     font-size: 1.25rem;
-    border-bottom: 2px solid #343430;
+    border-bottom: 2px solid #E0E0FB;
     color: #3E3D36;
     position: relative;
 }
@@ -332,14 +332,14 @@ button:hover {
 .footer {
     text-align: center;
     font-size: 0.8rem;
-    color: #3E3D36;
-    border-top: 1px solid #eef2f8;
+    color: #343430;
+    border-top: 2px solid #ffffff;
     padding: 1.2rem;
-    background: #FFDFAB;
+    background: #FFFFFF;
 }
 
 .footer a {
-    color: #3E3D36;
+    color: #343430;
 }
 
 ul {
