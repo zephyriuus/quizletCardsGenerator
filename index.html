@@ -11,17 +11,22 @@
 <div class="container">
     <h1>ITExamAnswers to Quizlet Deck Generator</h1>
     <div class="two-columns">
+        <!-- LEFT PANEL -->
         <div class="input-panel">
-            <label style="font-weight: 600; margin-bottom: 8px; display: block;">Paste HTML (from itexamanswers.net)</label>
+            <h3>Paste HTML (from itexamanswers.net)</h3>
             <textarea id="htmlInput" placeholder='Paste the full HTML source of a quiz page...'></textarea>
             <div class="format-controls">
                 <div class="format-row">
-                    <label>Between question & answer:</label>
-                    <input type="text" id="qaSep" value="," maxlength="3" placeholder="e.g. , or $">
+                    <p style="margin-right: 10px;">Between Term and Definition</p>
+                    <label>Tab: </label>
+                    <input type="radio" id="formatTab" name="formatOption" value="tab" checked>
+                    <input type="text" id="qaSep" maxlength="3" placeholder="Custom separator (e.g. \t for tab) ">
                 </div>
                 <div class="format-row">
-                    <label>Between pairs (cards):</label>
-                    <input type="text" id="pairSep" value=";" maxlength="3" placeholder="e.g. ; or |">
+                    <p style="margin-right: 10px;">Between Cards</p>
+                    <label>Enter: </label>
+                    <input type="radio" id="formatNewLine" name="formatOption" value="newline" checked>
+                    <br><input type="text" id="pairSep" maxlength="3" placeholder='Custom separator (e.g. \n for new line)'>
                 </div>
             </div>
 
@@ -29,19 +34,20 @@
                 <button id="extractBtn">Extract & format</button>
             </div>
         </div>
+        <!-- RIGHT PANEL -->
         <div class="output-panel">
-            <label style="font-weight: 600; margin-bottom: 8px; display: block;">Extracted Q&A string</label>
+            <h3>Extracted Q&A string</h3>
             <textarea id="formattedOutput" readonly placeholder="Output will appear here..."></textarea>
-            <div class="results-area">
-                <div style="font-weight: 600; margin-bottom: 10px;">Preview (first 3 pairs)</div>
-                <div id="previewCards"></div>
+            <div class="cards-panel">
+                <div class="cards-header">
+                    <h3>Card Manager <span style="font-weight:normal;">(check/uncheck to include)</span></h3>
+                    <span id="cardsCounter" style="font-size:0.75rem; background:#e9f0f5; padding:4px 12px; border-radius:50px;">0 cards</span>
+                </div>
+                <div id="cardsListContainer" class="cards-scroll">
+                    <div class="error" style="margin:10px;">No cards yet. Extract HTML or add custom cards.</div>
+                </div>
             </div>
         </div>
-        <div><strong>To extract:</strong>
-        <p>- Inspect the website (ITExamAnswers)</p>
-        <p>- Press the sources tab</p>
-        <p>- Copy all</p>
-        <p>- Paste</p></div>
     </div>
     <div class="footer">
         © 2026 Starlit Sky. All rights reserved.

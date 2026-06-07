@@ -6,6 +6,9 @@
     const qaSepInput = document.getElementById('qaSep');
     const pairSepInput = document.getElementById('pairSep');
 
+    qaSepInput.value = "\t";
+    pairSepInput.value = "\n";
+
     // Core extraction: returns array of {question, answer}
     function extractQnA(htmlString) {
         const parser = new DOMParser();
