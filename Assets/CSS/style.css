@@ -4,29 +4,41 @@
 }
 
 body {
-    background: #f1f5f9;
     margin: 0;
     padding: 24px 16px;
+    min-height: 100vh;
+}
+
+
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
 }
 
 .container {
-    max-width: 1600px;
+    max-width: 85%;
+    text-align: center;
     margin: 0 auto;
-    background: white;
-    border-radius: 2rem;
-    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 20px 35px -12px #30302C;
     overflow: hidden;
+    border: 3px solid #30302C;
 }
 
 h1 {
-    background: linear-gradient(135deg, #0b2b3b, #1a4a6f);
+    background: #faebd1;
     margin: 0;
     padding: 1.6rem 2rem;
     font-size: 1.8rem;
     font-weight: 600;
-    color: white;
+    color: #3E3D36;
     letter-spacing: -0.01em;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 2px solid #30302C;
 }
 
 .two-columns {
@@ -34,16 +46,16 @@ h1 {
     flex-wrap: wrap;
     gap: 1.5rem;
     padding: 2rem;
-    background: #fefefe;
+    background: #f8f4e8;
 }
 
 .input-panel, .output-panel {
     flex: 1;
     min-width: 280px;
-    background: #ffffff;
+    background: #FFFFFF;
     border-radius: 1.5rem;
     box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.05);
-    border: 1px solid #e9edf2;
+    border: 3px solid #343430;
     overflow: hidden;
 }
 
@@ -52,9 +64,8 @@ h1 {
     margin: 0;
     padding: 1rem 1.5rem;
     font-size: 1.25rem;
-    font-weight: 600;
-    border-bottom: 1px solid #e2e8f0;
-    color: #0c4e6e;
+    border-bottom: 2px solid #343430;
+    color: #3E3D36;
     position: relative;
 }
 
@@ -66,7 +77,7 @@ textarea {
     font-size: 0.85rem;
     line-height: 1.5;
     resize: vertical;
-    background: #ffffff;
+    background: #FAFCFF;
     outline: none;
 }
 
@@ -127,7 +138,7 @@ textarea:focus {
 }
 
 button {
-    background: #126e8c;
+    background: #313a8c;
     border: none;
     padding: 10px 20px;
     border-radius: 60px;
@@ -140,7 +151,7 @@ button {
 }
 
 button:hover {
-    background: #0b556e;
+    background: #1A1F50;
     transform: scale(0.98);
 }
 
@@ -320,11 +331,15 @@ button:hover {
 
 .footer {
     text-align: center;
-    font-size: 0.7rem;
-    color: #7f8c9a;
+    font-size: 0.8rem;
+    color: #3E3D36;
     border-top: 1px solid #eef2f8;
     padding: 1.2rem;
-    background: #fafcff;
+    background: #FFDFAB;
+}
+
+.footer a {
+    color: #3E3D36;
 }
 
 ul {
@@ -334,4 +349,10 @@ ul {
 
 li {
     margin: 2px 0;
+}
+
+.bree-serif-regular {
+  font-family: "Bree Serif", serif;
+  font-weight: 400;
+  font-style: normal;
 }
