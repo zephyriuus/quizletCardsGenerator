@@ -7,45 +7,71 @@
     <link rel="icon" type="image/png" href="assets/img/Duck_Logo.png">
     <link rel="stylesheet" href="Assets/CSS/style.css">
     <script src="Assets/JS/script.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<video autoplay muted loop playsinline id="bg-video">
+        <source src="Assets/IMG/background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+</video>
+
 <div class="container">
-    <h1>ITExamAnswers to Quizlet Deck Generator</h1>
+    <h1 class="bree-serif-regular">ITExamAnswers to Quizlet Deck Generator</h1>
     <div class="two-columns">
+        <!-- LEFT PANEL -->
         <div class="input-panel">
-            <label style="font-weight: 600; margin-bottom: 8px; display: block;">Paste HTML (from itexamanswers.net)</label>
-            <textarea id="htmlInput" placeholder='Paste the full HTML source of a quiz page...'></textarea>
+            <h3 class="bree-serif-regular">Paste HTML (from itexamanswers.net)</h3>
+            <textarea id="htmlInput" placeholder='HTML Code goes here...'></textarea>
             <div class="format-controls">
                 <div class="format-row">
-                    <label>Between question & answer:</label>
-                    <input type="text" id="qaSep" value="," maxlength="3" placeholder="e.g. , or $">
+                    <p class="bree-serif-regular">Term and Definition</p>
+                    <span style="font-size:0.7rem;"><i>(Default: Tab)</i></span>
+                    <input type="text" id="qaSep" maxlength="3" value="">
                 </div>
                 <div class="format-row">
-                    <label>Between pairs (cards):</label>
-                    <input type="text" id="pairSep" value=";" maxlength="3" placeholder="e.g. ; or |">
+                    <p class="bree-serif-regular">Between Cards:</p>
+                    <span style="font-size:0.7rem;"><i>(Default: Enter)</i></span>
+                    <input type="text" id="pairSep" maxlength="3" value="">
                 </div>
             </div>
-
             <div class="flex-buttons">
-                <button id="extractBtn">Extract & format</button>
+                <button id="extractBtn">Extract</button>
             </div>
         </div>
+
+        <!-- RIGHT PANEL -->
         <div class="output-panel">
-            <label style="font-weight: 600; margin-bottom: 8px; display: block;">Extracted Q&A string</label>
-            <textarea id="formattedOutput" readonly placeholder="Output will appear here..."></textarea>
-            <div class="results-area">
-                <div style="font-weight: 600; margin-bottom: 10px;">Preview (first 3 pairs)</div>
-                <div id="previewCards"></div>
+            <h3 class="bree-serif-regular">Exported Cards
+                <button id="copyAllBtn" class="copy-btn">Copy all</button>
+            </h3>
+            <textarea id="formattedOutput" readonly placeholder="Output will be generated after extraction & selection..."></textarea>
+            <div class="cards-panel">
+                <div class="cards-header">
+                    <h3 class="bree-serif-regular">Preview Cards</h3>
+                    <span id="cardsCounter">0 cards</span>
+                </div>
+                <div class="filter-bar">
+                    <div class="filter-option">
+                        <button id="toggleHideBtn" class="small-btn toggle-hide-btn">Toggle Visibility of Unchecked Cards</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="selectAllBtn" class="small-btn">Select all</button>
+                        <button id="deselectAllBtn" class="small-btn">Deselect all</button>
+                    </div>
+                </div>
+                <div id="cardsListContainer" class="cards-scroll">
+                    <div class="error">No cards yet. Paste HTML and click "Extract".</div>
+                </div>
             </div>
         </div>
-        <div><strong>To extract:</strong>
-        <p>- Inspect the website (ITExamAnswers)</p>
-        <p>- Press the sources tab</p>
-        <p>- Copy all</p>
-        <p>- Paste</p></div>
     </div>
-    <div class="footer">
-        © 2026 Starlit Sky. All rights reserved.
+    
+    <div class="footer bree-serif-regular">
+        <h2 class="bree-serif-regular">Not working? <a class="bree-serif-regular" href="mailto:zelaskiee117@gmail.com"> email me here</a></h2>
+        © 2026 Starlit Sky
     </div>
 </div>
 </body>
